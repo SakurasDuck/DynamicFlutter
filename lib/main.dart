@@ -5,13 +5,15 @@
 ///LastEditTime: 2020-04-23 00:08:59
 ///Description: file content
 ///
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
+
 import 'package:analyzer/dart/analysis/features.dart';
 import 'package:analyzer/dart/analysis/utilities.dart';
-import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:args/args.dart';
+
 import 'ast_runtime_class.dart';
 
 main(List<String> arguments) async {
@@ -25,7 +27,7 @@ main(List<String> arguments) async {
   } else {
     var ast = await generate(paths[0]);
     //测试Runtime
-    // var astRuntime = AstRuntime(ast);
+    var astRuntime = AstRuntime(ast);
     // var res = await astRuntime.callFunction('incTen', params: [100]);
     // stdout.writeln('Invoke incTec(100) result: $res');
   }
@@ -83,12 +85,11 @@ class MyAstVisitor extends SimpleAstVisitor<Map> {
   Map _buildBloc(List body) => {"type": "BlockStatement", "body": body};
 
   //构造运算表达式结构
-  Map _buildBinaryExpression(Map left, Map right, String lexeme) => {
-        "type": "BinaryExpression",
-        "operator": lexeme,
-        "left": left,
-        "right": right
-      };
+  Map _buildBinaryExpression(Map left, Map right, String lexeme) => {"type": "BinaryExpression", "operator": lexeme, "left": left, "right": right};
+
+  //构造赋值表达式
+  Map _buildAssignmentExpression(String operator, Map left, Map right) =>
+      {"type": "AssignmentExpression", "operator": operator, "left": left, "right": right};
 
   //构造变量声明
   Map _buildVariableDeclaration(Map id, Map init) => {
@@ -98,19 +99,17 @@ class MyAstVisitor extends SimpleAstVisitor<Map> {
       };
 
   //构造变量声明
-  Map _buildVariableDeclarationList(
-          Map typeAnnotation, List<Map> declarations) =>
-      {
+  Map _buildVariableDeclarationList(Map typeAnnotation, List<Map> declarations) => {
         "type": "VariableDeclarationList",
         "typeAnnotation": typeAnnotation,
         "declarations": declarations,
       };
+
   //构造标识符定义
   Map _buildIdentifier(String name) => {"type": "Identifier", "name": name};
 
   //构造数值定义
-  Map _buildNumericLiteral(num value) =>
-      {"type": "NumericLiteral", "value": value};
+  Map _buildNumericLiteral(num value) => {"type": "NumericLiteral", "value": value};
 
   //构造函数声明
   Map _buildFunctionDeclaration(Map id, Map expression) => {
@@ -118,6 +117,9 @@ class MyAstVisitor extends SimpleAstVisitor<Map> {
         "id": id,
         "expression": expression,
       };
+
+  //构造函数声明
+  Map _buildFieldDeclaration(List<Map> metadata, Map fields) => {"type": "FieldDeclaration", "metadata": metadata, "fields": fields};
 
   //构造函数表达式
   Map _buildFunctionExpression(Map params, Map body, {bool isAsync: false}) => {
@@ -128,12 +130,10 @@ class MyAstVisitor extends SimpleAstVisitor<Map> {
       };
 
   //构造函数参数
-  Map _buildFormalParameterList(List<Map> parameterList) =>
-      {"type": "FormalParameterList", "parameterList": parameterList};
+  Map _buildFormalParameterList(List<Map> parameterList) => {"type": "FormalParameterList", "parameterList": parameterList};
 
   //构造函数参数
-  Map _buildSimpleFormalParameter(Map type, String name) =>
-      {"type": "SimpleFormalParameter", "paramType": type, "name": name};
+  Map _buildSimpleFormalParameter(Map type, String name) => {"type": "SimpleFormalParameter", "paramType": type, "name": name};
 
   //构造函数参数类型
   Map _buildTypeName(String name) => {
@@ -147,10 +147,7 @@ class MyAstVisitor extends SimpleAstVisitor<Map> {
         "argument": argument,
       };
 
-  Map _buildMethodDeclaration(
-          Map id, Map parameters, Map typeParameters, Map body, Map returnType,
-          {bool isAsync: false}) =>
-      {
+  Map _buildMethodDeclaration(Map id, Map parameters, Map typeParameters, Map body, Map returnType, {bool isAsync: false}) => {
         "type": "MethodDeclaration",
         "id": id,
         "parameters": parameters,
@@ -166,23 +163,25 @@ class MyAstVisitor extends SimpleAstVisitor<Map> {
         "expression": expression,
       };
 
+  Map _buildSuperExpression(Map id, Map expression) => {
+        "type": "SuperExpression",
+        "expression": expression,
+      };
+
   Map _buildPrefixedIdentifier(Map identifier, Map prefix) => {
         "type": "PrefixedIdentifier",
         "identifier": identifier,
         "prefix": prefix,
       };
 
-  Map _buildMethodInvocation(Map callee, Map typeArguments, Map argumentList) =>
-      {
+  Map _buildMethodInvocation(Map callee, Map typeArguments, Map argumentList) => {
         "type": "MethodInvocation",
         "callee": callee,
         "typeArguments": typeArguments,
         "argumentList": argumentList,
       };
 
-  Map _buildClassDeclaration(Map id, Map superClause, Map implementsClause,
-          Map mixinClause, List<Map> metadata, List<Map> body) =>
-      {
+  Map _buildClassDeclaration(Map id, Map superClause, Map implementsClause, Map mixinClause, List<Map> metadata, List<Map> body) => {
         "type": "ClassDeclaration",
         "id": id,
         "superClause": superClause,
@@ -192,23 +191,22 @@ class MyAstVisitor extends SimpleAstVisitor<Map> {
         "body": body,
       };
 
-  Map _buildArgumentList(List<Map> argumentList) =>
-      {"type": "ArgumentList", "argumentList": argumentList};
+  Map _buildArgumentList(List<Map> argumentList) => {"type": "ArgumentList", "argumentList": argumentList};
 
-  Map _buildStringLiteral(String value) =>
-      {"type": "StringLiteral", "value": value};
+  Map _buildStringLiteral(String value) => {"type": "StringLiteral", "value": value};
 
-  Map _buildBooleanLiteral(bool value) =>
-      {"type": "BooleanLiteral", "value": value};
+  Map _buildBooleanLiteral(bool value) => {"type": "BooleanLiteral", "value": value};
 
-  Map _buildImplementsClause(List<Map> implementList) =>
-      {"type": "ImplementsClause", "implements": implementList};
+  Map _buildImplementsClause(List<Map> implementList) => {"type": "ImplementsClause", "implements": implementList};
 
   Map _buildPropertyAccess(Map id, Map expression) => {
         "type": "PropertyAccess",
         "id": id,
         "expression": expression,
       };
+
+  //字符串内联表达式构建
+  Map _buildInterpolationExpression(Map expression) => {"type": "InterpolationExpression", "expression": expression};
 
   @override
   Map visitCompilationUnit(CompilationUnit node) {
@@ -221,14 +219,23 @@ class MyAstVisitor extends SimpleAstVisitor<Map> {
   }
 
   @override
+  Map visitExpressionStatement(ExpressionStatement node) {
+    return _safelyVisitNode(node.expression);
+  }
+
+  @override
+  Map visitAssignmentExpression(AssignmentExpression node) {
+    return _buildAssignmentExpression(node.operator.lexeme, _safelyVisitNode(node.leftHandSide), _safelyVisitNode(node.rightHandSide));
+  }
+
+  @override
   Map visitBlockFunctionBody(BlockFunctionBody node) {
     return _safelyVisitNode(node.block);
   }
 
   @override
   Map visitVariableDeclaration(VariableDeclaration node) {
-    return _buildVariableDeclaration(
-        _safelyVisitNode(node.name), _safelyVisitNode(node.initializer));
+    return _buildVariableDeclaration(_safelyVisitNode(node.name), _safelyVisitNode(node.initializer));
   }
 
   @override
@@ -238,8 +245,7 @@ class MyAstVisitor extends SimpleAstVisitor<Map> {
 
   @override
   Map visitVariableDeclarationList(VariableDeclarationList node) {
-    return _buildVariableDeclarationList(
-        _safelyVisitNode(node.type), _safelyVisitNodeList(node.variables));
+    return _buildVariableDeclarationList(_safelyVisitNode(node.type), _safelyVisitNodeList(node.variables));
   }
 
   @override
@@ -249,9 +255,18 @@ class MyAstVisitor extends SimpleAstVisitor<Map> {
 
   @override
   Map visitBinaryExpression(BinaryExpression node) {
-    return _buildBinaryExpression(_safelyVisitNode(node.leftOperand),
-        _safelyVisitNode(node.rightOperand), node.operator.lexeme);
+    return _buildBinaryExpression(_safelyVisitNode(node.leftOperand), _safelyVisitNode(node.rightOperand), node.operator.lexeme);
   }
+
+  @override
+  Map visitFieldDeclaration(FieldDeclaration node) {
+    return _buildFieldDeclaration(_safelyVisitNodeList(node.metadata), _safelyVisitNode(node.fields));
+  }
+
+  // @override
+  // Map visitAnnotation(Annotation node) {
+  //   return
+  // }
 
   @override
   Map visitIntegerLiteral(IntegerLiteral node) {
@@ -260,8 +275,7 @@ class MyAstVisitor extends SimpleAstVisitor<Map> {
 
   @override
   Map visitFunctionDeclaration(FunctionDeclaration node) {
-    return _buildFunctionDeclaration(
-        _safelyVisitNode(node.name), _safelyVisitNode(node.functionExpression));
+    return _buildFunctionDeclaration(_safelyVisitNode(node.name), _safelyVisitNode(node.functionExpression));
   }
 
   @override
@@ -271,15 +285,12 @@ class MyAstVisitor extends SimpleAstVisitor<Map> {
 
   @override
   Map visitFunctionExpression(FunctionExpression node) {
-    return _buildFunctionExpression(
-        _safelyVisitNode(node.parameters), _safelyVisitNode(node.body),
-        isAsync: node.body.isAsynchronous);
+    return _buildFunctionExpression(_safelyVisitNode(node.parameters), _safelyVisitNode(node.body), isAsync: node.body.isAsynchronous);
   }
 
   @override
   Map visitSimpleFormalParameter(SimpleFormalParameter node) {
-    return _buildSimpleFormalParameter(
-        _safelyVisitNode(node.type), node.identifier.name);
+    return _buildSimpleFormalParameter(_safelyVisitNode(node.type), node.identifier.name);
   }
 
   @override
@@ -299,25 +310,19 @@ class MyAstVisitor extends SimpleAstVisitor<Map> {
 
   @override
   visitMethodDeclaration(MethodDeclaration node) {
-    return _buildMethodDeclaration(
-        _safelyVisitNode(node.name),
-        _safelyVisitNode(node.parameters),
-        _safelyVisitNode(node.typeParameters),
-        _safelyVisitNode(node.body),
-        _safelyVisitNode(node.returnType),
+    return _buildMethodDeclaration(_safelyVisitNode(node.name), _safelyVisitNode(node.parameters), _safelyVisitNode(node.typeParameters),
+        _safelyVisitNode(node.body), _safelyVisitNode(node.returnType),
         isAsync: node.body.isAsynchronous);
   }
 
   @override
   visitNamedExpression(NamedExpression node) {
-    return _buildNamedExpression(
-        _safelyVisitNode(node.name), _safelyVisitNode(node.expression));
+    return _buildNamedExpression(_safelyVisitNode(node.name), _safelyVisitNode(node.expression));
   }
 
   @override
   visitPrefixedIdentifier(PrefixedIdentifier node) {
-    return _buildPrefixedIdentifier(
-        _safelyVisitNode(node.identifier), _safelyVisitNode(node.prefix));
+    return _buildPrefixedIdentifier(_safelyVisitNode(node.identifier), _safelyVisitNode(node.prefix));
   }
 
   @override
@@ -333,19 +338,18 @@ class MyAstVisitor extends SimpleAstVisitor<Map> {
     } else {
       callee = _safelyVisitNode(node.methodName);
     }
-    return _buildMethodInvocation(callee, _safelyVisitNode(node.typeArguments),
-        _safelyVisitNode(node.argumentList));
+    return _buildMethodInvocation(callee, _safelyVisitNode(node.typeArguments), _safelyVisitNode(node.argumentList));
   }
 
   @override
   visitClassDeclaration(ClassDeclaration node) {
-    return _buildClassDeclaration(
-        _safelyVisitNode(node.name),
-        _safelyVisitNode(node.extendsClause),
-        _safelyVisitNode(node.implementsClause),
-        _safelyVisitNode(node.withClause),
-        _safelyVisitNodeList(node.metadata),
-        _safelyVisitNodeList(node.members));
+    return _buildClassDeclaration(_safelyVisitNode(node.name), _safelyVisitNode(node.extendsClause), _safelyVisitNode(node.implementsClause),
+        _safelyVisitNode(node.withClause), _safelyVisitNodeList(node.metadata), _safelyVisitNodeList(node.members));
+  }
+
+  @override
+  Map visitInterpolationExpression(InterpolationExpression node) {
+    return _buildInterpolationExpression(_safelyVisitNode(node.expression));
   }
 
   @override
@@ -385,8 +389,7 @@ class MyAstVisitor extends SimpleAstVisitor<Map> {
 
   @override
   visitPropertyAccess(PropertyAccess node) {
-    return _buildPropertyAccess(
-        _safelyVisitNode(node.propertyName), _safelyVisitNode(node.target));
+    return _buildPropertyAccess(_safelyVisitNode(node.propertyName), _safelyVisitNode(node.target));
   }
 }
 
@@ -398,8 +401,7 @@ Future generate(String path) async {
     await _handleError(path);
     if (exitCode == 2) {
       try {
-        var parseResult =
-            parseFile(path: path, featureSet: FeatureSet.fromEnableFlags([]));
+        var parseResult = parseFile(path: path, featureSet: FeatureSet.fromEnableFlags([]));
         var compilationUnit = parseResult.unit;
         //遍历AST
         var astData = compilationUnit.accept(MyAstVisitor());

@@ -10,8 +10,7 @@ import 'package:dynamicflutter/ast_node.dart';
 import '../widget_builders/widget_builder_factory.dart';
 
 Color parseColor(Expression expression) {
-  if (expression.isPrefixedIdentifier &&
-      (expression.asPrefixedIdentifier).prefix == 'Colors') {
+  if (expression.isPrefixedIdentifier && (expression.asPrefixedIdentifier).prefix == 'Colors') {
     switch ((expression.asPrefixedIdentifier).identifier) {
       case 'amber':
         return Colors.amber;
@@ -168,8 +167,7 @@ Color parseColor(Expression expression) {
         case 'withOpacity':
           return masterColor.withOpacity(argumentValue);
       }
-    } else if (calleeExpression.isIdentifier &&
-        (calleeExpression.asIdentifier).name == 'Color') {
+    } else if (calleeExpression.isIdentifier && (calleeExpression.asIdentifier).name == 'Color') {
       num argumentValue = 255;
       var argumentList = methodInvocation.argumentList;
       if (argumentList != null && argumentList.length > 0) {
@@ -209,55 +207,37 @@ EdgeInsets parseEdgeInsets(Expression expression) {
           for (var arg in argumentList) {
             if (arg.isNamedExpression) {
               if (arg.asNamedExpression.label == 'vertical') {
-                vertical = parseBaseLiteral(arg.asNamedExpression.expression)
-                        ?.toDouble() ??
-                    .0;
+                vertical = parseBaseLiteral(arg.asNamedExpression.expression)?.toDouble() ?? .0;
               } else if (arg.asNamedExpression.label == 'horizontal') {
-                horizontal = parseBaseLiteral(arg.asNamedExpression.expression)
-                        ?.toDouble() ??
-                    .0;
+                horizontal = parseBaseLiteral(arg.asNamedExpression.expression)?.toDouble() ?? .0;
               }
             }
           }
-          return EdgeInsets.symmetric(
-              vertical: vertical, horizontal: horizontal);
+          return EdgeInsets.symmetric(vertical: vertical, horizontal: horizontal);
         case 'only':
           num left = 0, top = 0, right = 0, bottom = 0;
           for (var arg in argumentList) {
             if (arg.isNamedExpression) {
               switch (arg.asNamedExpression.label) {
                 case 'left':
-                  left = parseBaseLiteral(arg.asNamedExpression.expression)
-                          ?.toDouble() ??
-                      .0;
+                  left = parseBaseLiteral(arg.asNamedExpression.expression)?.toDouble() ?? .0;
                   break;
                 case 'top':
-                  top = parseBaseLiteral(arg.asNamedExpression.expression)
-                          ?.toDouble() ??
-                      .0;
+                  top = parseBaseLiteral(arg.asNamedExpression.expression)?.toDouble() ?? .0;
                   break;
                 case 'right':
-                  right = parseBaseLiteral(arg.asNamedExpression.expression)
-                          ?.toDouble() ??
-                      .0;
+                  right = parseBaseLiteral(arg.asNamedExpression.expression)?.toDouble() ?? .0;
                   break;
                 case 'bottom':
-                  bottom = parseBaseLiteral(arg.asNamedExpression.expression)
-                          ?.toDouble() ??
-                      .0;
+                  bottom = parseBaseLiteral(arg.asNamedExpression.expression)?.toDouble() ?? .0;
                   break;
               }
             }
           }
-          return EdgeInsets.only(
-              left: left.toDouble(),
-              top: top.toDouble(),
-              right: right.toDouble(),
-              bottom: bottom.toDouble());
+          return EdgeInsets.only(left: left.toDouble(), top: top.toDouble(), right: right.toDouble(), bottom: bottom.toDouble());
         case 'all':
           num all = 0;
-          if ((argumentList?.length ?? 0) > 0 &&
-              argumentList[0].isNumericLiteral) {
+          if ((argumentList?.length ?? 0) > 0 && argumentList[0].isNumericLiteral) {
             all = (argumentList[0].asNumericLiteral).value;
           }
           return EdgeInsets.all(all.toDouble());
@@ -277,14 +257,12 @@ EdgeInsets parseEdgeInsets(Expression expression) {
               bottom = (argumentList[3].asNumericLiteral).value;
             }
           }
-          return EdgeInsets.fromLTRB(left.toDouble(), top.toDouble(),
-              right.toDouble(), bottom.toDouble());
+          return EdgeInsets.fromLTRB(left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble());
       }
     }
   } else if (expression.isPrefixedIdentifier) {
     var prefixedIdentifier = expression.asPrefixedIdentifier;
-    if (prefixedIdentifier.prefix == 'EdgeInsets' &&
-        prefixedIdentifier.identifier == 'zero') {
+    if (prefixedIdentifier.prefix == 'EdgeInsets' && prefixedIdentifier.identifier == 'zero') {
       return EdgeInsets.zero;
     }
   }
@@ -303,13 +281,9 @@ BoxConstraints parseBoxConstraints(Expression expression) {
           for (var arg in argumentList) {
             if (arg.isNamedExpression) {
               if (arg.asNamedExpression.label == 'width') {
-                width = parseBaseLiteral(arg.asNamedExpression.expression)
-                        ?.toDouble() ??
-                    .0;
+                width = parseBaseLiteral(arg.asNamedExpression.expression)?.toDouble() ?? .0;
               } else if (arg.asNamedExpression.label == 'height') {
-                height = parseBaseLiteral(arg.asNamedExpression.expression)
-                        ?.toDouble() ??
-                    .0;
+                height = parseBaseLiteral(arg.asNamedExpression.expression)?.toDouble() ?? .0;
               }
             }
           }
@@ -331,13 +305,9 @@ BoxConstraints parseBoxConstraints(Expression expression) {
           for (var arg in argumentList) {
             if (arg.isNamedExpression) {
               if (arg.asNamedExpression.label == 'width') {
-                width = parseBaseLiteral(arg.asNamedExpression.expression)
-                        ?.toDouble() ??
-                    .0;
+                width = parseBaseLiteral(arg.asNamedExpression.expression)?.toDouble() ?? .0;
               } else if (arg.asNamedExpression.label == 'height') {
-                height = parseBaseLiteral(arg.asNamedExpression.expression)
-                        ?.toDouble() ??
-                    .0;
+                height = parseBaseLiteral(arg.asNamedExpression.expression)?.toDouble() ?? .0;
               }
             }
           }
@@ -347,13 +317,9 @@ BoxConstraints parseBoxConstraints(Expression expression) {
           for (var arg in argumentList) {
             if (arg.isNamedExpression) {
               if (arg.asNamedExpression.label == 'width') {
-                width = parseBaseLiteral(arg.asNamedExpression.expression)
-                        ?.toDouble() ??
-                    .0;
+                width = parseBaseLiteral(arg.asNamedExpression.expression)?.toDouble() ?? .0;
               } else if (arg.asNamedExpression.label == 'height') {
-                height = parseBaseLiteral(arg.asNamedExpression.expression)
-                        ?.toDouble() ??
-                    .0;
+                height = parseBaseLiteral(arg.asNamedExpression.expression)?.toDouble() ?? .0;
               }
             }
           }
@@ -430,8 +396,7 @@ Radius parseRadius(MethodInvocation radiusNode) {
     var callee = radiusNode.callee;
     if (callee.isMemberExpression) {
       var memberExpression = callee.asMemberExpression;
-      if ((memberExpression.object.asIdentifier).name == 'Radius' &&
-          memberExpression.property == 'circular') {
+      if ((memberExpression.object.asIdentifier).name == 'Radius' && memberExpression.property == 'circular') {
         num circular = 0;
         if (radiusNode.argumentList.length == 1) {
           circular = (radiusNode.argumentList[0].asNumericLiteral).value;
@@ -445,8 +410,7 @@ Radius parseRadius(MethodInvocation radiusNode) {
 }
 
 Axis parseAxis(Expression expression) {
-  if (expression.isPrefixedIdentifier &&
-      expression.asPrefixedIdentifier.prefix == 'Axis') {
+  if (expression.isPrefixedIdentifier && expression.asPrefixedIdentifier.prefix == 'Axis') {
     if (expression.asPrefixedIdentifier.identifier == 'vertical') {
       return Axis.vertical;
     } else if (expression.asPrefixedIdentifier.identifier == 'horizontal') {

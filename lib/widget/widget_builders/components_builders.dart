@@ -131,9 +131,7 @@ class IconBuilder implements BaseWidgetBuilder {
     for (var arg in argumentList) {
       if (arg.isNamedExpression) {
         if (arg.asNamedExpression.label == 'size') {
-          size =
-              parseBaseLiteral(arg.asNamedExpression.expression)?.toDouble() ??
-                  25.0;
+          size = parseBaseLiteral(arg.asNamedExpression.expression)?.toDouble() ?? 25.0;
         } else if (arg.asNamedExpression.label == 'color') {
           color = parseColor(arg.asNamedExpression.expression);
         }
@@ -268,12 +266,10 @@ class AppBarBuilder implements BaseWidgetBuilder {
             color = parseColor(arg.asNamedExpression.expression);
             break;
           case 'centerTitle':
-            centerTitle =
-                parseBaseLiteral(arg.asNamedExpression.expression) ?? true;
+            centerTitle = parseBaseLiteral(arg.asNamedExpression.expression) ?? true;
             break;
           case 'title':
-            title = FHWidgetBuilderFactory.buildWidgetWithExpression(
-                arg.asNamedExpression.expression);
+            title = FHWidgetBuilderFactory.buildWidgetWithExpression(arg.asNamedExpression.expression);
             break;
         }
       }
@@ -299,9 +295,7 @@ class DividerBuilder implements BaseWidgetBuilder {
     for (var arg in argumentList) {
       if (arg.isNamedExpression) {
         if (arg.asNamedExpression.label == 'height') {
-          height =
-              parseBaseLiteral(arg.asNamedExpression.expression)?.toDouble() ??
-                  1.0;
+          height = parseBaseLiteral(arg.asNamedExpression.expression)?.toDouble() ?? 1.0;
         } else if (arg.asNamedExpression.label == 'color') {
           color = parseColor(arg.asNamedExpression.expression);
         }
@@ -316,3 +310,27 @@ class DividerBuilder implements BaseWidgetBuilder {
   @override
   String get widgetName => 'Divider';
 }
+
+// class FloatingActionButtonBuilder implements BaseWidgetBuilder {
+//   @override
+//   Widget build(Expression widgetExpression, {Map variables}) {
+//     var argumentList = widgetExpression.asMethodInvocation.argumentList;
+//     var child ;
+//     for (var arg in argumentList) {
+//       if (arg.isNamedExpression) {
+//         if (arg.asNamedExpression.label == 'child') {
+//           child =
+//               FHWidgetBuilderFactory.buildWidgetWithExpression(expression)
+//         } else if (arg.asNamedExpression.label == 'color') {
+//           color = parseColor(arg.asNamedExpression.expression);
+//         }
+//       }
+//     }
+//     return FloatingActionButton(
+//       child: ,
+//     );
+//   }
+//
+//   @override
+//   String get widgetName => 'FloatingActionButton';
+// }

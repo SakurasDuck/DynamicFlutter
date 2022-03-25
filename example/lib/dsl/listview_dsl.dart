@@ -13,13 +13,21 @@ class ListViewDSL extends StatefulWidget {
 }
 
 class _ListViewDSLState extends State<ListViewDSL> {
+  int index = 0;
+
+  void add() {
+    setState(() {
+      index *= 2;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.red,
         title: Text(
-          'ListViewDSL',
+          '${index}ListViewDSL',
           style: TextStyle(fontSize: 20, color: Colors.white),
         ),
         centerTitle: true,
@@ -29,13 +37,16 @@ class _ListViewDSLState extends State<ListViewDSL> {
           return Container(
             padding: EdgeInsets.only(left: 16, right: 16),
             alignment: Alignment.centerLeft,
-            child: Text('Hellow World',
-                style: TextStyle(color: Colors.white, fontSize: 18)),
+            child: Text('Hellow World', style: TextStyle(color: Colors.white, fontSize: 18)),
             color: Colors.lightBlue.shade300,
             height: 45,
           );
         },
         itemCount: 50,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: add,
+        child: Text('添加'),
       ),
     );
   }
