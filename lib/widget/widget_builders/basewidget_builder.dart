@@ -5,12 +5,12 @@
 ///LastEditTime: 2020-03-24 14:46:38
 ///Description: widget builder interface
 ///
+import 'package:dynamicflutter/ast_runtime_class.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamicflutter/ast_node.dart';
 
 abstract class BaseWidgetBuilder {
-  Widget build(Expression widgetExpression, {Map variables}) =>
-      SizedBox.fromSize(
+  Widget build(Expression widgetExpression, {Map variables}) => SizedBox.fromSize(
         size: Size.square(0),
       );
 

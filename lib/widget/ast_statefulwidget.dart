@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:dynamicflutter/ast_node.dart';
+
 ///
 ///Author: YoungChan
 ///Date: 2020-03-12 17:30:17
@@ -8,7 +10,9 @@ import 'dart:async';
 ///Description: StatefulWidget wrapper
 ///
 import 'package:flutter/material.dart';
-import 'package:dynamicflutter/ast_node.dart';
+
+import '../ast_runtime_class.dart';
+import '../ast_varialble_stack.dart';
 import 'widget_builders/widget_builders.dart';
 
 class AstStatefulWidget extends StatefulWidget {
@@ -22,6 +26,8 @@ class AstStatefulWidget extends StatefulWidget {
 
 class _AstStatefulWidgetState extends State<AstStatefulWidget> {
   Widget _bodyWidget;
+
+  AstRuntime _runtime;
 
   static const TAG = "AstStatefulWidgetState";
 
@@ -39,13 +45,9 @@ class _AstStatefulWidgetState extends State<AstStatefulWidget> {
               switch (bodyNode.asMethodDeclaration.name) {
                 case 'build':
                   var buildBodyReturn = bodyNode.asMethodDeclaration.body.body;
-                  if (buildBodyReturn.isNotEmpty &&
-                      buildBodyReturn[0].isReturnStatement &&
-                      buildBodyReturn[0].asReturnStatement.argument != null) {
+                  if (buildBodyReturn.isNotEmpty && buildBodyReturn[0].isReturnStatement && buildBodyReturn[0].asReturnStatement.argument != null) {
                     setState(() {
-                      _bodyWidget =
-                          FHWidgetBuilderFactory.buildWidgetWithExpression(
-                              buildBodyReturn[0].asReturnStatement.argument);
+                      _bodyWidget = FHWidgetBuilderFactory.buildWidgetWithExpression(buildBodyReturn[0].asReturnStatement.argument);
                     });
                   }
                   break;
@@ -68,6 +70,7 @@ class _AstStatefulWidgetState extends State<AstStatefulWidget> {
 
   @override
   void initState() {
+    _runtime = AstRuntime(widget.ast, superInstance: {'setState': AstVarialbleModel(AstVariableType.Function, super.setState)});
     _parseRootAst(widget.ast);
 
     super.initState();
@@ -84,8 +87,7 @@ class _AstStatefulWidgetState extends State<AstStatefulWidget> {
       color: Colors.white,
       child: _bodyWidget == null
           ? Center(
-              child: SizedBox.fromSize(
-                  size: Size.square(30), child: CircularProgressIndicator()),
+              child: SizedBox.fromSize(size: Size.square(30), child: CircularProgressIndicator()),
             )
           : _bodyWidget,
     );

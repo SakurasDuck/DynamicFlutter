@@ -34,8 +34,7 @@ class AstVariableStack {
       var top = _stack[i - 1];
       if (top.containsKey(name)) {
         var variableModel = top[name];
-        if (variableModel != null &&
-            variableModel._variableType == AstVariableType.Base) {
+        if (variableModel != null && variableModel.variableType == AstVariableType.Base) {
           return variableModel;
         }
       }
@@ -49,9 +48,7 @@ class AstVariableStack {
       var top = _stack[i - 1];
       if (top.containsKey(name)) {
         var variableModel = top[name];
-        if (variableModel != null &&
-            variableModel._variableType == AstVariableType.Function &&
-            variableModel.value is T) {
+        if (variableModel != null && variableModel.variableType == AstVariableType.Function && variableModel.value is T) {
           return variableModel.value;
         }
       }
@@ -83,7 +80,7 @@ class AstVariableStack {
 }
 
 class AstVarialbleModel {
-  AstVariableType _variableType;
+  AstVariableType variableType;
   dynamic value;
-  AstVarialbleModel(this._variableType, this.value);
+  AstVarialbleModel(this.variableType, this.value);
 }

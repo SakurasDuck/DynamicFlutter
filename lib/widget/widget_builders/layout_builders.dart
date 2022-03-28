@@ -27,15 +27,13 @@ class ScaffoldBuilder implements BaseWidgetBuilder {
             color = parseColor(expression);
             break;
           case 'appBar':
-            appBar =
-                FHWidgetBuilderFactory.buildWidgetWithExpression(expression);
+            appBar = FHWidgetBuilderFactory.buildWidgetWithExpression(expression);
             break;
           case 'body':
             body = FHWidgetBuilderFactory.buildWidgetWithExpression(expression);
             break;
           case 'floatingActionButton':
-            floatingActionButton =
-                FHWidgetBuilderFactory.buildWidgetWithExpression(expression);
+            floatingActionButton = FHWidgetBuilderFactory.buildWidgetWithExpression(expression);
             break;
         }
       }
@@ -98,8 +96,7 @@ class ContainerBuilder implements BaseWidgetBuilder {
             foregroundDecoration = parseBoxDecoration(expression);
             break;
           case 'child':
-            child =
-                FHWidgetBuilderFactory.buildWidgetWithExpression(expression);
+            child = FHWidgetBuilderFactory.buildWidgetWithExpression(expression);
             break;
         }
       }
@@ -163,20 +160,16 @@ class ListViewBuilder implements BaseWidgetBuilder {
           case 'itemBuilder':
             //读取itemBuilder 中返回的widget
             print("itemBuild: ${arg.asNamedExpression.expression}");
-            itemBuilderExpression = arg.asNamedExpression.expression
-                .asFunctionExpression.body.body[0].asReturnStatement.argument;
+            itemBuilderExpression = arg.asNamedExpression.expression.asFunctionExpression.body.body[0].asReturnStatement.argument;
             break;
           case 'separatorBuilder':
             //读取separatorBuilder 中返回的Widget
-            separatorBuilderExpression = arg.asNamedExpression.expression
-                .asFunctionExpression.body.body[0].asReturnStatement.argument;
+            separatorBuilderExpression = arg.asNamedExpression.expression.asFunctionExpression.body.body[0].asReturnStatement.argument;
             break;
           case 'children':
-            var childrenArgument =
-                arg.asNamedExpression.expression.asListLiteral;
+            var childrenArgument = arg.asNamedExpression.expression.asListLiteral;
             for (var childExpression in childrenArgument.elements) {
-              children.add(FHWidgetBuilderFactory.buildWidgetWithExpression(
-                  childExpression));
+              children.add(FHWidgetBuilderFactory.buildWidgetWithExpression(childExpression));
             }
             break;
         }
@@ -186,8 +179,7 @@ class ListViewBuilder implements BaseWidgetBuilder {
       if (callee.asMemberExpression.property == 'builder') {
         return ListView.builder(
           itemBuilder: (context, index) {
-            return FHWidgetBuilderFactory.buildWidgetWithExpression(
-                itemBuilderExpression);
+            return FHWidgetBuilderFactory.buildWidgetWithExpression(itemBuilderExpression);
           },
           itemCount: itemCount,
           scrollDirection: scrollDirection,
@@ -199,15 +191,13 @@ class ListViewBuilder implements BaseWidgetBuilder {
       } else if (callee.asMemberExpression.property == 'separated') {
         return ListView.separated(
           itemBuilder: (context, index) {
-            return FHWidgetBuilderFactory.buildWidgetWithExpression(
-                itemBuilderExpression);
+            return FHWidgetBuilderFactory.buildWidgetWithExpression(itemBuilderExpression);
           },
           itemCount: itemCount,
           scrollDirection: scrollDirection,
           reverse: reverse,
           separatorBuilder: (context, index) {
-            return FHWidgetBuilderFactory.buildWidgetWithExpression(
-                separatorBuilderExpression);
+            return FHWidgetBuilderFactory.buildWidgetWithExpression(separatorBuilderExpression);
           },
           padding: padding,
           shrinkWrap: shrinkWrap,
@@ -261,8 +251,7 @@ class RowBuilder implements BaseWidgetBuilder {
           case 'children':
             var childrenArgument = expression.asListLiteral;
             for (var childExpression in childrenArgument.elements) {
-              children.add(FHWidgetBuilderFactory.buildWidgetWithExpression(
-                  childExpression));
+              children.add(FHWidgetBuilderFactory.buildWidgetWithExpression(childExpression));
             }
             break;
         }
@@ -315,8 +304,7 @@ class ColumnBuilder implements BaseWidgetBuilder {
           case 'children':
             var childrenArgument = expression.asListLiteral;
             for (var childExpression in childrenArgument.elements) {
-              children.add(FHWidgetBuilderFactory.buildWidgetWithExpression(
-                  childExpression));
+              children.add(FHWidgetBuilderFactory.buildWidgetWithExpression(childExpression));
             }
             break;
         }

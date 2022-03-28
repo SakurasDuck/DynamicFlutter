@@ -14,7 +14,7 @@ class AstRuntime {
   AstClass _astClass;
   AstVariableStack _variableStack;
 
-  AstRuntime(Map ast) {
+  AstRuntime(Map ast, {Map<String, AstVarialbleModel> superInstance}) {
     if (ast['type'] == astNodeNameValue(AstNodeName.Program)) {
       var body = ast['body'] as List;
       _variableStack = AstVariableStack();
@@ -23,6 +23,9 @@ class AstRuntime {
         if (b['type'] == astNodeNameValue(AstNodeName.ClassDeclaration)) {
           //解析类
           _astClass = AstClass.fromAst(b, variableStack: _variableStack);
+          if (superInstance != null) {
+            _astClass.addSuper(superInstance);
+          }
         } else if (b['type'] == astNodeNameValue(AstNodeName.FunctionDeclaration)) {
           //解析全局函数
           var func = AstFunction.fromAst(b);
@@ -63,6 +66,10 @@ class AstClass {
     return null;
   }
 
+  dynamic getField(String name) {
+    return _variableStack.getVariableValue(name)?.value;
+  }
+
   factory AstClass.fromAst(Map ast, {AstVariableStack variableStack}) {
     if (ast['type'] == astNodeNameValue(AstNodeName.ClassDeclaration)) {
       var classNode = ClassDeclaration.fromAst(ast);
@@ -85,6 +92,17 @@ class AstClass {
       return AstClass(variableStack);
     }
     return null;
+  }
+
+  //先做简单的注入super对象
+  void addSuper(Map<String, AstVarialbleModel> superInstance) {
+    superInstance.forEach((key, value) {
+      if (value.variableType == AstVariableType.Function) {
+        _variableStack.setFunctionInstance(key, value.value);
+      } else {
+        _variableStack.setVariableValue(key, value.value);
+      }
+    });
   }
 }
 

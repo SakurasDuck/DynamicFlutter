@@ -208,6 +208,10 @@ class MyAstVisitor extends SimpleAstVisitor<Map> {
   //字符串内联表达式构建
   Map _buildInterpolationExpression(Map expression) => {"type": "InterpolationExpression", "expression": expression};
 
+  Map _buildStringInterpolation(List<Map> element) => {"type": "StringInterpolation", "element": element};
+
+  Map _buildInterpolationString(String value) => {"type": "InterpolationString", "value": value};
+
   @override
   Map visitCompilationUnit(CompilationUnit node) {
     return _buildAstRoot(_safelyVisitNodeList(node.declarations));
@@ -216,6 +220,16 @@ class MyAstVisitor extends SimpleAstVisitor<Map> {
   @override
   Map visitBlock(Block node) {
     return _buildBloc(_safelyVisitNodeList(node.statements));
+  }
+
+  @override
+  Map visitInterpolationString(InterpolationString node) {
+    return _buildInterpolationString(node.value);
+  }
+
+  @override
+  Map visitStringInterpolation(StringInterpolation node) {
+    return _buildStringInterpolation(_safelyVisitNodeList(node.elements));
   }
 
   @override

@@ -13,11 +13,11 @@ class ListViewDSL extends StatefulWidget {
 }
 
 class _ListViewDSLState extends State<ListViewDSL> {
-  int index = 0;
+  int number = 0;
 
   void add() {
-    setState(() {
-      index *= 2;
+    super.setState(() {
+      number *= 2;
     });
   }
 
@@ -27,7 +27,7 @@ class _ListViewDSLState extends State<ListViewDSL> {
       appBar: AppBar(
         backgroundColor: Colors.red,
         title: Text(
-          '${index}ListViewDSL',
+          'fggdf${number}ListViewDSL',
           style: TextStyle(fontSize: 20, color: Colors.white),
         ),
         centerTitle: true,

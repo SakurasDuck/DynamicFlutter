@@ -47,6 +47,8 @@ enum AstNodeName {
   IndexExpression,
   Program,
   InterpolationExpression,
+  StringInterpolation,
+  InterpolationString,
 }
 
 String astNodeNameValue(AstNodeName nodeName) => nodeName.toString().split(".")[1];
@@ -552,6 +554,38 @@ class InterpolationExpression extends AstNode {
   Map toAst() => _ast;
 }
 
+class StringInterpolation extends AstNode {
+  List<AstNode> element;
+
+  StringInterpolation(this.element, {Map ast}) : super(ast: ast);
+
+  factory StringInterpolation.fromAst(Map ast) {
+    if (ast != null && ast['type'] == astNodeNameValue(AstNodeName.StringInterpolation)) {
+      return StringInterpolation(ast['element'], ast: ast);
+    }
+    return null;
+  }
+
+  @override
+  Map toAst() => _ast;
+}
+
+class InterpolationString extends AstNode {
+  String value;
+
+  InterpolationString(this.value, {Map ast}) : super(ast: ast);
+
+  factory InterpolationString.fromAst(Map ast) {
+    if (ast != null && ast['type'] == astNodeNameValue(AstNodeName.InterpolationString)) {
+      return InterpolationString(ast['value'], ast: ast);
+    }
+    return null;
+  }
+
+  @override
+  Map toAst() => _ast;
+}
+
 class AssignmentExpression extends AstNode {
   String operator;
   Expression left;
@@ -869,6 +903,8 @@ class Expression extends AstNode {
   bool isSwitchStatement;
   bool isIndexExpression;
   bool isInterpolationExpression;
+  bool isStringInterpolation;
+  bool isInterpolationString;
 
   @override
   Map toAst() => _ast;
@@ -905,6 +941,8 @@ class Expression extends AstNode {
     this.isSwitchStatement = false,
     this.isIndexExpression = false,
     this.isInterpolationExpression = false,
+    this.isStringInterpolation = false,
+    this.isInterpolationString = false,
     Map ast,
   }) : super(ast: ast);
 
@@ -971,9 +1009,17 @@ class Expression extends AstNode {
       return Expression(IndexExpression.fromAst(ast), isIndexExpression: true, ast: ast);
     } else if (astType == astNodeNameValue(AstNodeName.InterpolationExpression)) {
       return Expression(InterpolationExpression.fromAst(ast), isInterpolationExpression: true, ast: ast);
+    } else if (astType == astNodeNameValue(AstNodeName.StringInterpolation)) {
+      return Expression(StringInterpolation.fromAst(ast), isStringInterpolation: true, ast: ast);
+    } else if (astType == astNodeNameValue(AstNodeName.InterpolationString)) {
+      return Expression(InterpolationString.fromAst(ast), isInterpolationString: true, ast: ast);
     }
     return null;
   }
+
+  InterpolationString get asInterpolationString => _expression as InterpolationString;
+
+  StringInterpolation get asStringInterpolation => _expression as StringInterpolation;
 
   InterpolationExpression get asInterpolationExpression => _expression as InterpolationExpression;
 
